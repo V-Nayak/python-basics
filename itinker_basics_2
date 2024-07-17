@@ -2,7 +2,7 @@ import tkinter as tk
 
 def flash_title():
     current_title = root.title()
-    new_title = "Open Window when flashing" if current_title == "" else ""
+    new_title = "Open Window" if current_title == "" else ""
     root.title(new_title)
     root.after(200, flash_title)  # Change title every 500 milliseconds
 
