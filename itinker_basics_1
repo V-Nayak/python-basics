@@ -5,7 +5,7 @@ from tkinter import ttk
 root = Tk()
 #root.title("Treeview in Tk")
 
-myLabel = Label(root, text='O Bhagare!')
+myLabel = Label(root, text='O Patil !')
 
 myLabel.pack()
 treeview = ttk.Treeview()
