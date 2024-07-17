@@ -1,0 +1,31 @@
+import pandas as pd
+from pymongo import MongoClient
+
+def fetch_from_db():
+    # Connect to MongoDB
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client['july10_database']
+    collection = db['user_collection']
+    
+    # Fetch all documents from the collection
+    cursor = collection.find({})
+    
+    # Create a list to store the documents
+    data = []
+    for document in cursor:
+        data.append(document)
+    
+    return data
+
+def export_to_excel():
+    # Fetch data from MongoDB
+    data = fetch_from_db()
+    
+    # Create a DataFrame
+    df = pd.DataFrame(data)
+    
+    # Export to Excel
+    df.to_excel("user_data.xlsx", index=False)
+    messagebox.showinfo("Export Successful", "Data exported to user_data.xlsx")
+
+ 

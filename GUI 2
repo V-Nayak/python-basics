@@ -1,0 +1,83 @@
+import tkinter as tk
+import pandas as pd
+from tkinter import messagebox
+from pymongo import MongoClient
+
+def save_to_db(name, mobile, email):
+    # Connect to MongoDB
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client['july15_database']
+    collection = db['user_collection']
+    
+    # Create a document to insert
+    user_data = {
+        'name': name,
+        'mobile': mobile,
+        'email': email
+    }
+    
+    # Insert the document into the collection
+    collection.insert_one(user_data)
+    messagebox.showinfo("Success", "Data saved successfully!")
+
+def submit():
+    name = name_entry.get()
+    mobile = mobile_entry.get()
+    email = email_entry.get()
+    
+    if name and mobile and email:
+        save_to_db(name, mobile, email)
+        
+        # Clear the entry fields after saving
+        name_entry.delete(0, tk.END)
+        mobile_entry.delete(0, tk.END)
+        email_entry.delete(0, tk.END)
+        
+        # Display the saved data
+        display_data()
+    else:
+        messagebox.showwarning("Input Error", "Please fill in all fields.")
+
+def display_data():
+    # Connect to MongoDB
+    client = MongoClient("mongodb://localhost:27017/")
+    db = client['july15_database']
+    collection = db['user_collection']
+    
+    # Retrieve all documents from the collection
+    data = list(collection.find({}, {'_id': 0}))
+    
+    # Clear the text widget
+    output_text.delete(1.0, tk.END)
+    
+    # Display the data in the text widget
+    for doc in data:
+        output_text.insert(tk.END, f"Name: {doc['name']}, Mobile: {doc['mobile']}, Email: {doc['email']}\n")
+
+# Create the main window
+root = tk.Tk()
+root.title("User Information Form")
+
+# Create and place the labels and entry widgets
+tk.Label(root, text="Name").grid(row=0, column=0, padx=10, pady=10)
+tk.Label(root, text="Mobile No").grid(row=1, column=0, padx=10, pady=10)
+tk.Label(root, text="Email").grid(row=2, column=0, padx=10, pady=10)
+
+name_entry = tk.Entry(root)
+mobile_entry = tk.Entry(root)
+email_entry = tk.Entry(root)
+
+name_entry.grid(row=0, column=1, padx=10, pady=10)
+mobile_entry.grid(row=1, column=1, padx=10, pady=10)
+email_entry.grid(row=2, column=1, padx=10, pady=10)
+
+# Create and place the submit button
+submit_button = tk.Button(root, text="Submit", command=submit)
+submit_button.grid(row=3, column=0, columnspan=2, pady=20)
+
+# Create and place the output text widget
+output_text = tk.Text(root, height=10, width=50)
+output_text.grid(row=4, column=0, columnspan=2, padx=10, pady=10)
+
+# Run the main event loop
+root.mainloop()
